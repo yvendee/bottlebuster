@@ -61,15 +61,35 @@ Respond with "plastic bottle", "glass bottle", or "not found """
     return response.choices[0].message.content
 
 
+# @app.route('/upload', methods=['POST'])
+# def upload():
+#     global upload_count
+#     file = request.files['image']
+    
+#     if file:
+#         image_stream = io.BytesIO(file.read())
+#         result = upload_image_to_openai(image_stream)
+#         upload_count += 1
+        
+#         # Check the content of the result
+#         if "plastic" in result.lower():
+#             response = "plastic bottle"
+#         elif "glass" in result.lower():
+#             response = "glass bottle"
+#         else:
+#             response = "not found"
+        
+#         return jsonify({'result': response, 'upload_count': upload_count})
+    
+#     return jsonify({'error': 'No image uploaded'}), 400
+
 @app.route('/upload', methods=['POST'])
 def upload():
-    global upload_count
     file = request.files['image']
     
     if file:
         image_stream = io.BytesIO(file.read())
         result = upload_image_to_openai(image_stream)
-        upload_count += 1
         
         # Check the content of the result
         if "plastic" in result.lower():
@@ -79,9 +99,10 @@ def upload():
         else:
             response = "not found"
         
-        return jsonify({'result': response, 'upload_count': upload_count})
+        return response, 200  # Return plain text with a 200 status code
     
-    return jsonify({'error': 'No image uploaded'}), 400
+    return "No image uploaded", 400  # Return plain text error message
+
 
 
 @app.route('/count', methods=['GET'])
