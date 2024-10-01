@@ -85,11 +85,13 @@ Respond with "plastic bottle", "glass bottle", or "not found """
 
 @app.route('/upload', methods=['POST'])
 def upload():
+    global upload_count
     file = request.files['image']
     
     if file:
         image_stream = io.BytesIO(file.read())
         result = upload_image_to_openai(image_stream)
+        upload_count += 1
         
         # Check the content of the result
         if "plastic" in result.lower():
