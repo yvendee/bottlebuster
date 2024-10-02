@@ -3,6 +3,7 @@ from openai import OpenAI
 import os
 import io
 import base64
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -86,6 +87,10 @@ Respond with "plastic bottle", "glass bottle", or "not found """
 @app.route('/upload', methods=['POST'])
 def upload():
     global upload_count
+
+    print("Headers:", request.headers)  # Log the incoming headers
+    print("Data Length:", len(request.data))  # Log the length of the incoming data
+
     file = request.files['image']
     
     if file:
@@ -106,6 +111,46 @@ def upload():
     return "No image uploaded", 400  # Return plain text error message
 
 
+@app.route('/upload2', methods=['POST'])
+def upload2():
+    global upload_count
+
+    print("Headers:", request.headers)  # Log the incoming headers
+    print("Data Length:", len(request.data))  # Log the length of the incoming data
+
+    file = request.files['image']
+    
+    if file:
+        # Create the uploads directory if it doesn't exist
+        uploads_dir = 'uploads'
+        if not os.path.exists(uploads_dir):
+            os.makedirs(uploads_dir)
+
+        # Generate a filename with a datetime stamp
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"{timestamp}_{file.filename}"
+        filepath = os.path.join(uploads_dir, filename)
+
+        # Save the file locally
+        file.save(filepath)
+
+        image_stream = io.BytesIO(file.read())
+        upload_count += 1
+        
+        # # Check the content of the result
+        # if "plastic" in result.lower():
+        #     response = "plastic bottle"
+        # elif "glass" in result.lower():
+        #     response = "glass bottle"
+        # else:
+        #     response = "not found"
+
+        response = "image saved"
+        
+        return response, 200  # Return plain text with a 200 status code
+    
+    return "No image uploaded", 400  # Return plain text error message
+
 @app.route('/test', methods=['POST'])
 def test():
     global upload_count
@@ -118,6 +163,10 @@ def test():
         return response, 200  # Return plain text with a 200 status code
     
     return "No image uploaded", 400  # Return plain text error message
+
+@app.route('/good', methods=['GET'])
+def good():
+    return "good", 200  # Return plain text "good" with a 200 status code
 
 
 @app.route('/count', methods=['GET'])
