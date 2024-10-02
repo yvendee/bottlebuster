@@ -106,6 +106,19 @@ def upload():
     return "No image uploaded", 400  # Return plain text error message
 
 
+@app.route('/test', methods=['POST'])
+def upload():
+    global upload_count
+    file = request.files['image']
+    
+    if file:
+        image_stream = io.BytesIO(file.read())
+        upload_count += 1
+        response = "good"
+        return response, 200  # Return plain text with a 200 status code
+    
+    return "No image uploaded", 400  # Return plain text error message
+
 
 @app.route('/count', methods=['GET'])
 def count():
