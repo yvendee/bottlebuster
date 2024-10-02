@@ -107,7 +107,7 @@ def upload():
 
 
 @app.route('/test', methods=['POST'])
-def upload():
+def test():
     global upload_count
     file = request.files['image']
     
