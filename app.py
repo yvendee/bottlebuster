@@ -1,13 +1,13 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from openai import OpenAI
 import os
 import io
 import base64
-from datetime import datetime
+from PIL import Image
 
 app = Flask(__name__)
 
-
+latest_image = None
 upload_count = 0
 
 def upload_image_to_openai(image_stream):
@@ -86,15 +86,17 @@ Respond with "plastic bottle", "glass bottle", or "not found """
 
 @app.route('/upload', methods=['POST'])
 def upload():
-    global upload_count
+    global upload_count, latest_image
 
     print("Headers:", request.headers)  # Log the incoming headers
     print("Data Length:", len(request.data))  # Log the length of the incoming data
+
 
     file = request.files['image']
     
     if file:
         image_stream = io.BytesIO(file.read())
+        latest_image = image_stream  # Store the image in memory
         result = upload_image_to_openai(image_stream)
         upload_count += 1
         
@@ -150,6 +152,26 @@ def upload2():
         return response, 200  # Return plain text with a 200 status code
     
     return "No image uploaded", 400  # Return plain text error message
+
+
+@app.route('/latestimage', methods=['GET'])
+def latest_image_route():
+    if latest_image is None:
+        return "No image uploaded yet", 404
+    
+    # Reset the stream position to the beginning
+    latest_image.seek(0)
+    
+    # Use PIL to get the image dimensions and size
+    image = Image.open(latest_image)
+    width, height = image.size
+    size = latest_image.getbuffer().nbytes  # Size in bytes
+    
+    # Reset the stream position to serve the image
+    latest_image.seek(0)
+    
+    # Serve the image
+    return send_file(latest_image, mimetype='image/jpeg')
 
 @app.route('/test', methods=['POST'])
 def test():
