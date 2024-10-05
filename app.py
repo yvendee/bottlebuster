@@ -98,7 +98,7 @@ def upload():
         
         # Open the image and resize it to 30%
         image = Image.open(image_stream)
-        new_size = (int(image.width * 0.3), int(image.height * 0.3))
+        new_size = (int(image.width * 0.8), int(image.height * 0.8))
         resized_image = image.resize(new_size, Image.LANCZOS)
 
         # Save the resized image to a new BytesIO stream
