@@ -39,6 +39,7 @@ def upload_image_to_openai(image_stream):
               "text": """ You are an image recognition model. Identify if the object is a plastic bottle, glass bottle, or neither. 
 - Plastic bottle: flexible, translucent, with a visible cap, without visible label.
 - Glass bottle: rigid, shiny, often thicker, and transparent.
+if image is in the dark return to "not found"
 Respond with "plastic bottle", "glass bottle", or "not found """
             }
           ]
