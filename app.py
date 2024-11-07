@@ -29,7 +29,7 @@ def upload_image_to_openai(image_stream):
     client = OpenAI()
 
     response = client.chat.completions.create(
-      model="gpt-4o",
+      model="gpt-4o-mini",
       messages=[
         {
           "role": "system",
