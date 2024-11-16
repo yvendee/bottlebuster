@@ -65,7 +65,7 @@ Respond with "plastic bottle", "glass bottle", or "not found """
     return response.choices[0].message.content
 
 
-# @app.route('/upload', methods=['POST'])
+# @app.route('/uploadxxx0', methods=['POST'])
 # def upload():
 #     global upload_count
 #     file = request.files['image']
