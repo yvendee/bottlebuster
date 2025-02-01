@@ -6,6 +6,7 @@ import base64
 from PIL import Image
 import http.client
 import json
+import requests
 
 
 app = Flask(__name__)
