@@ -4,6 +4,8 @@ import os
 import io
 import base64
 from PIL import Image
+import http.client
+import json
 
 
 app = Flask(__name__)
@@ -236,9 +238,58 @@ def good():
 def count():
     return jsonify({'upload_count': upload_count})
 
+@app.route('/sendsms', methods=['POST'])
+def send_sms():
+    # Retrieve the "to" and "text" fields from the request body
+    to = request.json.get('to')
+    text = request.json.get('text')
+
+    if not to or not text:
+        return jsonify({'error': 'Both "to" and "text" are required fields'}), 400
+
+    # Get the "Authorization" header from environment variables
+    authorization = os.getenv('IINFOBIP_AUTH')
+    if not authorization:
+        return jsonify({'error': 'Authorization token not found in environment variables'}), 500
+
+    # Set the "from" field to the hardcoded value
+    from_number = '447491163443'
+
+    # Prepare the payload for the Infobip API request
+    payload = json.dumps({
+        "messages": [
+            {
+                "destinations": [{"to": to}],
+                "from": from_number,
+                "text": text
+            }
+        ]
+    })
+
+    # Prepare the headers for the Infobip API request
+    headers = {
+        'Authorization': f'App {authorization}',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    }
+
+    # Make the API request to Infobip
+    try:
+        conn = http.client.HTTPSConnection("api.infobip.com")
+        conn.request("POST", "/sms/2/text/advanced", payload, headers)
+        res = conn.getresponse()
+        data = res.read()
+
+        # Return the response from Infobip
+        return jsonify({'response': json.loads(data.decode("utf-8"))}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/', methods=['GET'])
 def home():
     return "Server is running"
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
