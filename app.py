@@ -318,7 +318,7 @@ def send_text_to_telegram():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/sendtext2telegram2', methods=['POST'])
-def send_text_to_telegram():
+def send_text_to_telegram2():
     # Get the Telegram API token from the environment variable
     api_token = os.getenv('TELEGRAM_API_KEY2')
     if not api_token:
