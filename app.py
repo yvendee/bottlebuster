@@ -248,7 +248,7 @@ def send_sms():
         return jsonify({'error': 'Both "to" and "text" are required fields'}), 400
 
     # Get the "Authorization" header from environment variables
-    authorization = os.getenv('IINFOBIP_AUTH')
+    authorization = os.getenv('INFOBIP_AUTH')
     if not authorization:
         return jsonify({'error': 'Authorization token not found in environment variables'}), 500
 
