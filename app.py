@@ -285,6 +285,37 @@ def send_sms():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
+@app.route('/sendtext2telegram', methods=['POST'])
+def send_text_to_telegram():
+    # Get the Telegram API token from the environment variable
+    api_token = os.getenv('TELEGRAM_API_KEY1')
+    if not api_token:
+        return jsonify({'error': 'Telegram API token not found in environment variables'}), 500
+
+    # Retrieve the message and chatID from the request body
+    tmessage = request.json.get('tmessage')
+    chat_id = request.json.get('chatID')
+
+    if not tmessage or not chat_id:
+        return jsonify({'error': '"tmessage" and "chatID" are required fields'}), 400
+
+    # Prepare the URL for sending the message
+    message_api_url = f'https://api.telegram.org/bot{api_token}/sendMessage'
+
+    try:
+        # Send the message via Telegram API
+        response = requests.post(message_api_url, json={'chat_id': chat_id, 'text': tmessage})
+        
+        # Check if the request was successful
+        if response.status_code == 200:
+            return "ok", 200  # Return "ok" if successful
+        else:
+            return jsonify({'error': 'Failed to send message', 'details': response.json()}), 500
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/', methods=['GET'])
 def home():
     return "Server is running"
