@@ -359,7 +359,7 @@ def log_attendance(name, status):
 
         # Set up the credentials and client
         scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-        creds = ServiceAccountCredentials.from_json_keyfile_name('pivotal-being-451013-n8-d871cb40c767.json', scope)
+        creds = ServiceAccountCredentials.from_json_keyfile_name('pivotal-being-451013-n8-7cb74d87775f.json', scope)
         client = gspread.authorize(creds)
 
         # Open the spreadsheet by its ID
