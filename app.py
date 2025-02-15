@@ -8,6 +8,10 @@ import http.client
 import json
 import requests
 
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+from datetime import datetime
+
 
 app = Flask(__name__)
 
@@ -347,11 +351,45 @@ def send_text_to_telegram2():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
+def log_attendance(name, status):
+    # Get the current date and time in the format "YYYY-MM-DD HH:MM:SS"
+    date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+    # Set up the credentials and client
+    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+    creds = ServiceAccountCredentials.from_json_keyfile_name('pivotal-being-451013-n8-d2fce6adbcd6.json', scope)
+    client = gspread.authorize(creds)
+
+    # Open the spreadsheet by its ID, its from here: https://docs.google.com/spreadsheets/d/1YMlO4Dh1LsGTPQDnpPN1MYrFmoF5sir-NnVLRCfCKPU/edit?gid=0#gid=0
+    sheet = client.open_by_key("1YMlO4Dh1LsGTPQDnpPN1MYrFmoF5sir-NnVLRCfCKPU").sheet1
+
+    # Prepare the data to log (using the current date, name, and status)
+    data = [date, name, status]
+
+    # Append the data to the sheet (this will add the row at the bottom)
+    sheet.append_row(data)
+
+    # print("Data logged successfully!")
+
+@app.route('/log_attendance', methods=['POST'])
+def log_attendance_route():
+    # Retrieve the name and status from the request body
+    name = request.json.get('name')
+    status = request.json.get('status')
+
+    if not name or not status:
+        return jsonify({'error': 'Both "name" and "status" are required fields'}), 400
+
+    # Log attendance
+    log_attendance(name, status)
+    
+    return jsonify({'message': 'Attendance logged successfully'}), 200
+
+
 @app.route('/', methods=['GET'])
 def home():
     return "Server is running"
-
-
 
 if __name__ == '__main__':
     app.run(debug=True)
