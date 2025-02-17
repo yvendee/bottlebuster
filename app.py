@@ -389,15 +389,15 @@ def log_attendance_route():
 
         if name == "00001":
             name = "Precious Mendez"
-        elif name = "00002":
+        elif name == "00002":
             name = "David Williams"
-        elif name = "00003":
+        elif name == "00003":
             name = "Maria Lopez"
-        elif name = "00004":
+        elif name == "00004":
             name = "Mary Lee"
-        elif name = "00005":
+        elif name == "00005":
             name = "Anthony Moore"
-        elif name = "00006":
+        elif name == "00006":
             name = "Mona Wilson"        
  
         # Log attendance with name, section, and status
