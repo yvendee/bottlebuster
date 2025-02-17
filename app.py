@@ -387,6 +387,19 @@ def log_attendance_route():
         if not name or not section or not status:
             return jsonify({'error': 'All fields "name", "section", and "status" are required'}), 400
 
+        if name == "00001":
+            name = "Precious Mendez"
+        elif name = "00002":
+            name = "David Williams"
+        elif name = "00003":
+            name = "Maria Lopez"
+        elif name = "00004":
+            name = "Mary Lee"
+        elif name = "00005":
+            name = "Anthony Moore"
+        elif name = "00006":
+            name = "Mona Wilson"        
+ 
         # Log attendance with name, section, and status
         log_attendance(name, section, status)
 
