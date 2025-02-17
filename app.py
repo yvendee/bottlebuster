@@ -352,7 +352,7 @@ def send_text_to_telegram2():
         return jsonify({'error': str(e)}), 500
 
 
-def log_attendance(name, status):
+def log_attendance(name, section, status):
     try:
         # Get the current date and time in the format "YYYY-MM-DD HH:MM:SS"
         date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -365,8 +365,8 @@ def log_attendance(name, status):
         # Open the spreadsheet by its ID
         sheet = client.open_by_key("1YMlO4Dh1LsGTPQDnpPN1MYrFmoF5sir-NnVLRCfCKPU").sheet1
 
-        # Prepare the data to log (using the current date, name, and status)
-        data = [date, name, status]
+        # Prepare the data to log (using the current date, name, section, and status)
+        data = [date, name, section, status]
 
         # Append the data to the sheet (this will add the row at the bottom)
         sheet.append_row(data)
@@ -379,15 +379,16 @@ def log_attendance(name, status):
 @app.route('/log_attendance', methods=['POST'])
 def log_attendance_route():
     try:
-        # Retrieve the name and status from the request body
+        # Retrieve the name, section, and status from the request body
         name = request.json.get('name')
+        section = request.json.get('section')
         status = request.json.get('status')
 
-        if not name or not status:
-            return jsonify({'error': 'Both "name" and "status" are required fields'}), 400
+        if not name or not section or not status:
+            return jsonify({'error': 'All fields "name", "section", and "status" are required'}), 400
 
-        # Log attendance
-        log_attendance(name, status)
+        # Log attendance with name, section, and status
+        log_attendance(name, section, status)
 
         return jsonify({'message': 'Attendance logged successfully'}), 200
     except Exception as e:
