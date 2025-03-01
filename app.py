@@ -407,11 +407,14 @@ def log_attendance_route():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/backend-test', methods=['GET'])
+def backend_test():
+    return jsonify({'message': 'it works', 'status': True})
 
 
 @app.route('/', methods=['GET'])
 def home():
-    return "Server is running"
+    return "Server is running. developer contact: yvendee2020@gmail.com"
 
 if __name__ == '__main__':
     app.run(debug=True)
