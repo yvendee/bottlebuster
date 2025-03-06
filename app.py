@@ -412,6 +412,104 @@ def backend_test():
     return jsonify({'message': 'it works', 'status': True})
 
 
+# A dictionary of people (dname) and their corresponding license plates
+vehicle_registry = {
+    "00001": {"name": "Precious Mendez", "license": "ABC 1234"},
+    "00002": {"name": "David Williams", "license": "XYZ 5678"},
+    "00003": {"name": "Maria Lopez", "license": "LMN 9101"},
+    "00004": {"name": "Mary Lee", "license": "PQR 1122"},
+    "00005": {"name": "Anthony Moore", "license": "DEF 3344"},
+    "00006": {"name": "Mona Wilson", "license": "GHI 5566"},
+    "00007": {"name": "John Smith", "license": "JKL 7788"},
+    "00008": {"name": "Alice Johnson", "license": "MNO 9900"},
+    "00009": {"name": "Rachel Green", "license": "RST 2233"},
+    "00010": {"name": "Monica Geller", "license": "UVW 4455"},
+    "00011": {"name": "Chandler Bing", "license": "XYZ 6677"},
+    "00012": {"name": "Joey Tribbiani", "license": "ABC 8899"},
+    "00013": {"name": "Phoebe Buffay", "license": "DEF 1011"},
+    "00014": {"name": "Ross Geller", "license": "GHI 1213"},
+    "00015": {"name": "Rachel Zane", "license": "JKL 1415"},
+    "00016": {"name": "Mike Ross", "license": "MNO 1617"},
+    "00017": {"name": "Harvey Specter", "license": "PQR 1819"},
+    "00018": {"name": "Louis Litt", "license": "RST 2021"},
+    "00019": {"name": "Donna Paulsen", "license": "UVW 2223"},
+    "00020": {"name": "Jessica Pearson", "license": "XYZ 2425"},
+    "00021": {"name": "Gina Torres", "license": "ABC 2627"},
+    "00022": {"name": "Katrina Bennett", "license": "DEF 2829"},
+    "00023": {"name": "Duke Silver", "license": "GHI 3031"},
+    "00024": {"name": "Andy Dwyer", "license": "JKL 3233"},
+    "00025": {"name": "Ben Wyatt", "license": "MNO 3435"},
+    "00026": {"name": "Leslie Knope", "license": "PQR 3637"},
+    "00027": {"name": "Tom Haverford", "license": "RST 3839"},
+    "00028": {"name": "April Ludgate", "license": "UVW 4041"},
+    "00029": {"name": "Ron Swanson", "license": "XYZ 4243"},
+    "00030": {"name": "Ann Perkins", "license": "ABC 4445"}
+}
+
+# Function to log vehicle entry/exit into Google Sheets
+def log_vehicle_entry_exit(date, status, dname, license_plate):
+    try:
+        # Set up the credentials and client for Google Sheets
+        scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+        creds = ServiceAccountCredentials.from_json_keyfile_name('pivotal-being-451013-n8-28821c4ba2f3.json', scope)
+        client = gspread.authorize(creds)
+
+        # Open the spreadsheet by its ID
+        sheet = client.open_by_key("1Cw7Okn2ufatPr8WjMmhuK9RFp9CwDL_xea2WS-F0I7k").sheet1
+
+        # Prepare the data to log (using the current date, action, name, and license plate)
+        data = [date, status, dname, license_plate]
+
+        # Append the data to the sheet (this will add the row at the bottom)
+        sheet.append_row(data)
+
+        # print("Data logged successfully!")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        raise Exception(f"Failed to log vehicle entry/exit: {str(e)}")
+
+
+@app.route('/vehicle_entry_exit', methods=['POST'])
+def vehicle_entry_exit():
+    try:
+        # Retrieve the status and id from the request body
+        status = request.json.get('status')
+        dname = request.json.get('id')
+
+        if not status or not dname:
+            return jsonify({'error': 'Both "status" and "id" are required'}), 400
+
+        # Check if the dname exists in the registry
+        if dname not in vehicle_registry:
+            return jsonify({'error': 'Invalid id'}), 400
+
+        # Get the corresponding data (name and license plate) from the registry
+        name = vehicle_registry[dname]["name"]
+        license_plate = vehicle_registry[dname]["license"]
+
+        # Determine the vehicle status
+        if status == "1":
+            action = "ENTRY"
+        elif status == "0":
+            action = "EXIT"
+        else:
+            return jsonify({'error': 'Invalid status. It must be "1" for ENTRY or "0" for EXIT'}), 400
+
+        # Get the current date and time in the format "YYYY-MM-DD HH:MM:SS"
+        date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+        # Log the data to Google Sheets
+        log_vehicle_entry_exit(date, action, name, license_plate)
+
+        # Create the response message
+        response_message = f"Vehicle with license plate {license_plate} has been marked for {action}."
+
+        return jsonify({'message': response_message}), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500         
+
+
 @app.route('/', methods=['GET'])
 def home():
     return "Server is running. developer contact: yvendee2020@gmail.com"
