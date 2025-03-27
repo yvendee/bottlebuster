@@ -654,7 +654,7 @@ def send_text_to_telegram2():
         return jsonify({'error': str(e)}), 500
 
 
-def log_attendance(name, section, status):
+def log_attendance(name, grade, section, lrn, status):
     try:
         # Get the current date and time in the format "YYYY-MM-DD HH:MM:SS"
         date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -668,7 +668,7 @@ def log_attendance(name, section, status):
         sheet = client.open_by_key("1YMlO4Dh1LsGTPQDnpPN1MYrFmoF5sir-NnVLRCfCKPU").sheet1
 
         # Prepare the data to log (using the current date, name, section, and status)
-        data = [date, name, section, status]
+        data = [name, grade, section, lrn, status]
 
         # Append the data to the sheet (this will add the row at the bottom)
         sheet.append_row(data)
@@ -685,25 +685,46 @@ def log_attendance_route():
         name = request.json.get('name')
         section = request.json.get('section')
         status = request.json.get('status')
+        grade = ""
+        lrn = ""
+        
 
         if not name or not section or not status:
             return jsonify({'error': 'All fields "name", "section", and "status" are required'}), 400
 
         if name == "00001":
-            name = "Precious Mendez"
+            name = "Precious Angel P. Mendez"
+            grade = "12"
+            section = "A"
+            lrn = "105161120127"
         elif name == "00002":
-            name = "David Williams"
+            name = "Darren E. Fabillar"
+            grade = "12"
+            section = "A"
+            lrn = "105158120169"
         elif name == "00003":
-            name = "Maria Lopez"
+            name = "Maria Gracia S. Lacerna"
+            grade = "12"
+            section = "B"
+            lrn = "105146120038"
         elif name == "00004":
-            name = "Mary Lee"
+            name = "Ann Rose L. Pardilla"
+            grade = "12"
+            section = "B"
+            lrn = "105144120779"
         elif name == "00005":
-            name = "Anthony Moore"
+            grade = "12"
+            section = "C"
+            name = "Jonabell DP. Dejumo"
+            lrn = "10476310018"
         elif name == "00006":
-            name = "Mona Wilson"        
+            grade = "12"
+            section = "C"
+            name = "Mona Wilson"
+            lrn = "10476310019"
  
         # Log attendance with name, section, and status
-        log_attendance(name, section, status)
+        log_attendance(name, grade, section, lrn, status)
 
         return jsonify({'message': 'Attendance logged successfully'}), 200
     except Exception as e:
