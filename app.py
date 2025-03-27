@@ -668,7 +668,7 @@ def log_attendance(name, grade, section, lrn, status):
         sheet = client.open_by_key("1YMlO4Dh1LsGTPQDnpPN1MYrFmoF5sir-NnVLRCfCKPU").sheet1
 
         # Prepare the data to log (using the current date, name, section, and status)
-        data = [name, grade, section, lrn, status]
+        data = [date, name, grade, section, lrn, status]
 
         # Append the data to the sheet (this will add the row at the bottom)
         sheet.append_row(data)
