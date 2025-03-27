@@ -72,6 +72,174 @@ Respond with "plastic bottle", "glass bottle", or "not found """
     return response.choices[0].message.content
 
 
+def upload_image_to_openai_for_msb1(image_stream):
+    # Read the image from the stream and encode it to base64
+    image_data = image_stream.read()
+    base64_image = base64.b64encode(image_data).decode('utf-8')
+
+    client = OpenAI()
+
+    # Construct the image URL payload
+    image_url_payload = {
+        "type": "image_url",
+        "image_url": {
+            "url": f"data:image/jpeg;base64,{base64_image}"
+        }
+    }
+
+    client = OpenAI()
+
+    response = client.chat.completions.create(
+      model="gpt-4o-mini",
+      messages=[
+        {
+          "role": "system",
+          "content": [
+            {
+              "type": "text",
+              "text": """You are an image recognition model. Identify if the object is an IV Extension Set, Saline Bottle, or Syringe Wrapper.
+- IV Extension Set: A flexible tube with connectors, used in medical settings.
+- Saline Bottle: A bottle, often transparent, containing saline solution.
+- Syringe Wrapper: Packaging that holds a syringe.
+If the image is dark or there is no item detected, return "not found".
+If it is an IV Extension Set, Saline Bottle, or Syringe Wrapper, respond with "yes". 
+Otherwise, respond with "not found".
+"""
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+              {
+                  "type": "text",
+                  "text": """Is the object in the image an IV Extension Set, Saline Bottle, or Syringe Wrapper?"""
+              },
+              image_url_payload
+          ]
+        }
+      ],
+      temperature=1,
+      max_tokens=4095,
+      top_p=1,
+      frequency_penalty=0,
+      presence_penalty=0
+    )
+    return response.choices[0].message.content
+
+
+def upload_image_to_openai_for_msb2(image_stream):
+    # Read the image from the stream and encode it to base64
+    image_data = image_stream.read()
+    base64_image = base64.b64encode(image_data).decode('utf-8')
+
+    client = OpenAI()
+
+    # Construct the image URL payload
+    image_url_payload = {
+        "type": "image_url",
+        "image_url": {
+            "url": f"data:image/jpeg;base64,{base64_image}"
+        }
+    }
+
+    client = OpenAI()
+
+    response = client.chat.completions.create(
+      model="gpt-4o-mini",
+      messages=[
+        {
+          "role": "system",
+          "content": [
+            {
+              "type": "text",
+              "text": """You are an image recognition model. Identify if the object is gauze, gloves, or a face mask.
+- Gauze: A piece of cloth or material, often used in medical settings for covering wounds.
+- Gloves: Protective hand coverings, typically made of rubber or latex.
+- Face Mask: A covering for the face, often used for protection or hygiene purposes.
+If the image is dark or no item is detected, return "not found".
+If it is gauze, gloves, or a face mask, respond with "yes".
+Otherwise, respond with "not found".
+"""
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+              {
+                  "type": "text",
+                  "text": """Is the object in the image gauze, gloves, or a face mask?"""
+              },
+              image_url_payload
+          ]
+        }
+      ],
+      temperature=1,
+      max_tokens=4095,
+      top_p=1,
+      frequency_penalty=0,
+      presence_penalty=0
+    )
+    return response.choices[0].message.content
+
+
+def upload_image_to_openai_for_msb3(image_stream):
+    # Read the image from the stream and encode it to base64
+    image_data = image_stream.read()
+    base64_image = base64.b64encode(image_data).decode('utf-8')
+
+    client = OpenAI()
+
+    # Construct the image URL payload
+    image_url_payload = {
+        "type": "image_url",
+        "image_url": {
+            "url": f"data:image/jpeg;base64,{base64_image}"
+        }
+    }
+
+    client = OpenAI()
+
+    response = client.chat.completions.create(
+      model="gpt-4o-mini",
+      messages=[
+        {
+          "role": "system",
+          "content": [
+            {
+              "type": "text",
+              "text": """You are an image recognition model. Identify if the object is a Syringe, Ampoules, or an IV Cannula.
+- Syringe: A medical device used to inject or withdraw fluids.
+- Ampoules: Small sealed vials containing medicine or chemicals.
+- IV Cannula: A small, flexible tube inserted into a vein to administer fluids or medication.
+If the image is dark or no item is detected, return "not found".
+If it is a Syringe, Ampoules, or an IV Cannula, respond with "yes".
+Otherwise, respond with "not found".
+"""
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+              {
+                  "type": "text",
+                  "text": """Is the object in the image a Syringe, Ampoules, or an IV Cannula?"""
+              },
+              image_url_payload
+          ]
+        }
+      ],
+      temperature=1,
+      max_tokens=4095,
+      top_p=1,
+      frequency_penalty=0,
+      presence_penalty=0
+    )
+    return response.choices[0].message.content
+
+
 # @app.route('/uploadxxx0', methods=['POST'])
 # def upload():
 #     global upload_count
@@ -93,6 +261,139 @@ Respond with "plastic bottle", "glass bottle", or "not found """
 #         return jsonify({'result': response, 'upload_count': upload_count})
     
 #     return jsonify({'error': 'No image uploaded'}), 400
+
+@app.route('/upload-gpw', methods=['POST'])
+def upload_gpw():
+    global upload_count, latest_image
+
+    print("Headers:", request.headers)  # Log the incoming headers
+    print("Data Length:", len(request.data))  # Log the length of the incoming data
+
+    file = request.files['image']
+    
+    if file:
+        image_stream = io.BytesIO(file.read())
+        
+        # Open the image and resize it to 30%
+        image = Image.open(image_stream)
+        new_size = (int(image.width * 0.9), int(image.height * 0.9))
+        resized_image = image.resize(new_size, Image.LANCZOS)
+
+        # Save the resized image to a new BytesIO stream
+        resized_image_stream = io.BytesIO()
+        resized_image.save(resized_image_stream, format=image.format)
+        resized_image_stream.seek(0)  # Reset stream position to the beginning
+
+        latest_image = resized_image_stream  # Store the resized image in memory
+        result = upload_image_to_openai_for_msb1(resized_image_stream)
+        upload_count += 1
+        
+        # Check the content of the result
+        if "yes" in result.lower():
+            response = "yes"
+        elif "iv extension set" in result.lower():
+            response = "yes"
+        elif "saline bottle" in result.lower():
+            response = "yes"
+        elif "syringe wrapper" in result.lower():
+            response = "yes"
+        else:
+            response = "not found"
+        
+        return response, 200  # Return plain text with a 200 status code
+        # return "response", 200  # Return plain text with a 200 status code
+    
+    return "No image uploaded", 400  # Return plain text error message
+
+
+@app.route('/upload-iw', methods=['POST'])
+def upload_iw():
+    global upload_count, latest_image
+
+    print("Headers:", request.headers)  # Log the incoming headers
+    print("Data Length:", len(request.data))  # Log the length of the incoming data
+
+    file = request.files['image']
+    
+    if file:
+        image_stream = io.BytesIO(file.read())
+        
+        # Open the image and resize it to 30%
+        image = Image.open(image_stream)
+        new_size = (int(image.width * 0.9), int(image.height * 0.9))
+        resized_image = image.resize(new_size, Image.LANCZOS)
+
+        # Save the resized image to a new BytesIO stream
+        resized_image_stream = io.BytesIO()
+        resized_image.save(resized_image_stream, format=image.format)
+        resized_image_stream.seek(0)  # Reset stream position to the beginning
+
+        latest_image = resized_image_stream  # Store the resized image in memory
+        result = upload_image_to_openai_for_msb2(resized_image_stream)
+        upload_count += 1
+        
+        # Check the content of the result
+        if "yes" in result.lower():
+            response = "yes"
+        elif "gloves" in result.lower():
+            response = "yes"
+        elif "gauze" in result.lower():
+            response = "yes"
+        elif "face mask" in result.lower():
+            response = "yes"
+        else:
+            response = "not found"
+        
+        return response, 200  # Return plain text with a 200 status code
+        # return "response", 200  # Return plain text with a 200 status code
+    
+    return "No image uploaded", 400  # Return plain text error message
+
+
+@app.route('/upload-sw', methods=['POST'])
+def upload_sw():
+    global upload_count, latest_image
+
+    print("Headers:", request.headers)  # Log the incoming headers
+    print("Data Length:", len(request.data))  # Log the length of the incoming data
+
+    file = request.files['image']
+    
+    if file:
+        image_stream = io.BytesIO(file.read())
+        
+        # Open the image and resize it to 30%
+        image = Image.open(image_stream)
+        new_size = (int(image.width * 0.9), int(image.height * 0.9))
+        resized_image = image.resize(new_size, Image.LANCZOS)
+
+        # Save the resized image to a new BytesIO stream
+        resized_image_stream = io.BytesIO()
+        resized_image.save(resized_image_stream, format=image.format)
+        resized_image_stream.seek(0)  # Reset stream position to the beginning
+
+        latest_image = resized_image_stream  # Store the resized image in memory
+        result = upload_image_to_openai_for_msb3(resized_image_stream)
+        upload_count += 1
+        
+        # Check the content of the result
+        if "yes" in result.lower():
+            response = "yes"
+        elif "syringe" in result.lower():
+            response = "yes"
+        elif "ampoules" in result.lower():
+            response = "yes"
+        elif "iv cannula" in result.lower():
+            response = "yes"
+        else:
+            response = "not found"
+        
+        return response, 200  # Return plain text with a 200 status code
+        # return "response", 200  # Return plain text with a 200 status code
+    
+    return "No image uploaded", 400  # Return plain text error message
+
+
 @app.route('/upload', methods=['POST'])
 def upload():
     global upload_count, latest_image
@@ -131,6 +432,7 @@ def upload():
         # return "response", 200  # Return plain text with a 200 status code
     
     return "No image uploaded", 400  # Return plain text error message
+
 
 # @app.route('/upload', methods=['POST'])
 # def upload():
