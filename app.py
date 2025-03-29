@@ -264,135 +264,150 @@ Otherwise, respond with "not found".
 
 @app.route('/upload-gpw', methods=['POST'])
 def upload_gpw():
+  
     global upload_count, latest_image
 
-    print("Headers:", request.headers)  # Log the incoming headers
-    print("Data Length:", len(request.data))  # Log the length of the incoming data
+    try:
+        print("Headers:", request.headers)  # Log the incoming headers
+        print("Data Length:", len(request.data))  # Log the length of the incoming data
 
-    file = request.files['image']
-    
-    if file:
-        image_stream = io.BytesIO(file.read())
+        file = request.files['image']
         
-        # Open the image and resize it to 30%
-        image = Image.open(image_stream)
-        new_size = (int(image.width * 0.9), int(image.height * 0.9))
-        resized_image = image.resize(new_size, Image.LANCZOS)
+        if file:
+            image_stream = io.BytesIO(file.read())
+            
+            # Open the image and resize it to 30%
+            image = Image.open(image_stream)
+            new_size = (int(image.width * 0.9), int(image.height * 0.9))
+            resized_image = image.resize(new_size, Image.LANCZOS)
 
-        # Save the resized image to a new BytesIO stream
-        resized_image_stream = io.BytesIO()
-        resized_image.save(resized_image_stream, format=image.format)
-        resized_image_stream.seek(0)  # Reset stream position to the beginning
+            # Save the resized image to a new BytesIO stream
+            resized_image_stream = io.BytesIO()
+            resized_image.save(resized_image_stream, format=image.format)
+            resized_image_stream.seek(0)  # Reset stream position to the beginning
 
-        latest_image = resized_image_stream  # Store the resized image in memory
-        result = upload_image_to_openai_for_msb1(resized_image_stream)
-        upload_count += 1
-        
-        # Check the content of the result
-        if "yes" in result.lower():
-            response = "yes"
-        elif "iv extension set" in result.lower():
-            response = "yes"
-        elif "saline bottle" in result.lower():
-            response = "yes"
-        elif "syringe wrapper" in result.lower():
-            response = "yes"
-        else:
-            response = "not found"
-        
-        return response, 200  # Return plain text with a 200 status code
-        # return "response", 200  # Return plain text with a 200 status code
-    
-    return "No image uploaded", 400  # Return plain text error message
+            latest_image = resized_image_stream  # Store the resized image in memory
+            result = upload_image_to_openai_for_msb1(resized_image_stream)
+            upload_count += 1
+            
+            # Check the content of the result
+            if "yes" in result.lower():
+                response = "yes"
+            elif "iv extension set" in result.lower():
+                response = "yes"
+            elif "saline bottle" in result.lower():
+                response = "yes"
+            elif "syringe wrapper" in result.lower():
+                response = "yes"
+            else:
+                response = "not found"
+            
+            return response, 200  # Return plain text with a 200 status code
+
+        return "No image uploaded", 400  # Return plain text error message
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return f"Error: {str(e)}", 500  # Return error message with 500 status code
+
 
 
 @app.route('/upload-iw', methods=['POST'])
 def upload_iw():
     global upload_count, latest_image
 
-    print("Headers:", request.headers)  # Log the incoming headers
-    print("Data Length:", len(request.data))  # Log the length of the incoming data
+    try:
 
-    file = request.files['image']
-    
-    if file:
-        image_stream = io.BytesIO(file.read())
-        
-        # Open the image and resize it to 30%
-        image = Image.open(image_stream)
-        new_size = (int(image.width * 0.9), int(image.height * 0.9))
-        resized_image = image.resize(new_size, Image.LANCZOS)
+      print("Headers:", request.headers)  # Log the incoming headers
+      print("Data Length:", len(request.data))  # Log the length of the incoming data
 
-        # Save the resized image to a new BytesIO stream
-        resized_image_stream = io.BytesIO()
-        resized_image.save(resized_image_stream, format=image.format)
-        resized_image_stream.seek(0)  # Reset stream position to the beginning
+      file = request.files['image']
+      
+      if file:
+          image_stream = io.BytesIO(file.read())
+          
+          # Open the image and resize it to 30%
+          image = Image.open(image_stream)
+          new_size = (int(image.width * 0.9), int(image.height * 0.9))
+          resized_image = image.resize(new_size, Image.LANCZOS)
 
-        latest_image = resized_image_stream  # Store the resized image in memory
-        result = upload_image_to_openai_for_msb2(resized_image_stream)
-        upload_count += 1
-        
-        # Check the content of the result
-        if "yes" in result.lower():
-            response = "yes"
-        elif "gloves" in result.lower():
-            response = "yes"
-        elif "gauze" in result.lower():
-            response = "yes"
-        elif "face mask" in result.lower():
-            response = "yes"
-        else:
-            response = "not found"
-        
-        return response, 200  # Return plain text with a 200 status code
-        # return "response", 200  # Return plain text with a 200 status code
-    
-    return "No image uploaded", 400  # Return plain text error message
+          # Save the resized image to a new BytesIO stream
+          resized_image_stream = io.BytesIO()
+          resized_image.save(resized_image_stream, format=image.format)
+          resized_image_stream.seek(0)  # Reset stream position to the beginning
+
+          latest_image = resized_image_stream  # Store the resized image in memory
+          result = upload_image_to_openai_for_msb2(resized_image_stream)
+          upload_count += 1
+          
+          # Check the content of the result
+          if "yes" in result.lower():
+              response = "yes"
+          elif "gloves" in result.lower():
+              response = "yes"
+          elif "gauze" in result.lower():
+              response = "yes"
+          elif "face mask" in result.lower():
+              response = "yes"
+          else:
+              response = "not found"
+          
+          return response, 200  # Return plain text with a 200 status code
+          # return "response", 200  # Return plain text with a 200 status code
+      
+      return "No image uploaded", 400  # Return plain text error message
+
+    except Exception as e:
+      print(f"An error occurred: {e}")
+      return f"Error: {str(e)}", 500  # Return error message with 500 status code
 
 
 @app.route('/upload-sw', methods=['POST'])
 def upload_sw():
     global upload_count, latest_image
+    try:
+      print("Headers:", request.headers)  # Log the incoming headers
+      print("Data Length:", len(request.data))  # Log the length of the incoming data
 
-    print("Headers:", request.headers)  # Log the incoming headers
-    print("Data Length:", len(request.data))  # Log the length of the incoming data
+      file = request.files['image']
+      
+      if file:
+          image_stream = io.BytesIO(file.read())
+          
+          # Open the image and resize it to 30%
+          image = Image.open(image_stream)
+          new_size = (int(image.width * 0.9), int(image.height * 0.9))
+          resized_image = image.resize(new_size, Image.LANCZOS)
 
-    file = request.files['image']
-    
-    if file:
-        image_stream = io.BytesIO(file.read())
-        
-        # Open the image and resize it to 30%
-        image = Image.open(image_stream)
-        new_size = (int(image.width * 0.9), int(image.height * 0.9))
-        resized_image = image.resize(new_size, Image.LANCZOS)
+          # Save the resized image to a new BytesIO stream
+          resized_image_stream = io.BytesIO()
+          resized_image.save(resized_image_stream, format=image.format)
+          resized_image_stream.seek(0)  # Reset stream position to the beginning
 
-        # Save the resized image to a new BytesIO stream
-        resized_image_stream = io.BytesIO()
-        resized_image.save(resized_image_stream, format=image.format)
-        resized_image_stream.seek(0)  # Reset stream position to the beginning
+          latest_image = resized_image_stream  # Store the resized image in memory
+          result = upload_image_to_openai_for_msb3(resized_image_stream)
+          upload_count += 1
+          
+          # Check the content of the result
+          if "yes" in result.lower():
+              response = "yes"
+          elif "syringe" in result.lower():
+              response = "yes"
+          elif "ampoules" in result.lower():
+              response = "yes"
+          elif "iv cannula" in result.lower():
+              response = "yes"
+          else:
+              response = "not found"
+          
+          return response, 200  # Return plain text with a 200 status code
+          # return "response", 200  # Return plain text with a 200 status code
+      
+      return "No image uploaded", 400  # Return plain text error message
 
-        latest_image = resized_image_stream  # Store the resized image in memory
-        result = upload_image_to_openai_for_msb3(resized_image_stream)
-        upload_count += 1
-        
-        # Check the content of the result
-        if "yes" in result.lower():
-            response = "yes"
-        elif "syringe" in result.lower():
-            response = "yes"
-        elif "ampoules" in result.lower():
-            response = "yes"
-        elif "iv cannula" in result.lower():
-            response = "yes"
-        else:
-            response = "not found"
-        
-        return response, 200  # Return plain text with a 200 status code
-        # return "response", 200  # Return plain text with a 200 status code
-    
-    return "No image uploaded", 400  # Return plain text error message
-
+    except Exception as e:
+      print(f"An error occurred: {e}")
+      return f"Error: {str(e)}", 500  # Return error message with 500 status code
 
 @app.route('/upload', methods=['POST'])
 def upload():
@@ -506,22 +521,28 @@ def upload():
 
 @app.route('/latestimage', methods=['GET'])
 def latest_image_route():
-    if latest_image is None:
-        return "No image uploaded yet", 404
-    
-    # Reset the stream position to the beginning
-    latest_image.seek(0)
-    
-    # Use PIL to get the image dimensions and size
-    image = Image.open(latest_image)
-    width, height = image.size
-    size = latest_image.getbuffer().nbytes  # Size in bytes
-    
-    # Reset the stream position to serve the image
-    latest_image.seek(0)
-    
-    # Serve the image
-    return send_file(latest_image, mimetype='image/jpeg')
+    try:
+        if latest_image is None:
+            return "No image uploaded yet", 404
+        
+        # Reset the stream position to the beginning
+        latest_image.seek(0)
+        
+        # Use PIL to get the image dimensions and size
+        image = Image.open(latest_image)
+        width, height = image.size
+        size = latest_image.getbuffer().nbytes  # Size in bytes
+        
+        # Reset the stream position to serve the image
+        latest_image.seek(0)
+        
+        # Serve the image
+        return send_file(latest_image, mimetype='image/jpeg')
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return f"Error: {str(e)}", 500  # Return error message with 500 status code
+
 
 @app.route('/test', methods=['POST'])
 def test():
@@ -653,6 +674,36 @@ def send_text_to_telegram2():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
+@app.route('/sendtelegram_medsortbin', methods=['POST'])
+def send_text_to_telegram_medsortbin():
+    # Get the Telegram API token from the environment variable
+    api_token = os.getenv('TELEGRAM_API_KEY_MEDSORTBIN')
+    if not api_token:
+        return jsonify({'error': 'Telegram API token not found in environment variables'}), 500
+
+    # Retrieve the message and chatID from the request body
+    tmessage = request.json.get('tmessage')
+    chat_id = request.json.get('chatID')
+
+    if not tmessage or not chat_id:
+        return jsonify({'error': '"tmessage" and "chatID" are required fields'}), 400
+
+    # Prepare the URL for sending the message
+    message_api_url = f'https://api.telegram.org/bot{api_token}/sendMessage'
+
+    try:
+        # Send the message via Telegram API
+        response = requests.post(message_api_url, json={'chat_id': chat_id, 'text': tmessage})
+        
+        # Check if the request was successful
+        if response.status_code == 200:
+            return "ok", 200  # Return "ok" if successful
+        else:
+            return jsonify({'error': 'Failed to send message', 'details': response.json()}), 500
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 def log_attendance(name, grade, section, lrn, status):
     try:
