@@ -557,7 +557,7 @@ def test():
     
     return "No image uploaded", 400  # Return plain text error message
 
-@app.route('/good', methods=['GET'])
+@app.route('/goood', methods=['GET'])
 def good():
     return "good", 200  # Return plain text "good" with a 200 status code
 
@@ -673,7 +673,6 @@ def send_text_to_telegram2():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
 
 @app.route('/sendtelegram_medsortbin', methods=['POST'])
 def send_text_to_telegram_medsortbin():
