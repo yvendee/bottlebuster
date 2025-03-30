@@ -748,7 +748,7 @@ def log_attendance_route():
             section = "A"
             lrn = "105161120127"
         elif name == "00002":
-            name = "Darren E. Fabillar"
+            name = "Daren E. Fabillar"
             grade = "12"
             section = "A"
             lrn = "105158120169"
@@ -758,7 +758,7 @@ def log_attendance_route():
             section = "B"
             lrn = "105146120038"
         elif name == "00004":
-            name = "Ann Rose L. Pardilla"
+            name = "Anna Rose L. Pardilla"
             grade = "12"
             section = "B"
             lrn = "105144120779"
