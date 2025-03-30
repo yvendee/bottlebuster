@@ -768,11 +768,36 @@ def log_attendance_route():
             name = "Jonabell DP. Dejumo"
             lrn = "10476310018"
         elif name == "00006":
-            grade = "12"
-            section = "C"
+            grade = "11"
+            section = "1"
+            name = "Maria Lopez"
+            lrn = "109158162812"
+        elif name == "00007":
+            grade = "11"
+            section = "1"
             name = "Mona Wilson"
-            lrn = "10476310019"
- 
+            lrn = "109158919247"
+        elif name == "00008":
+            grade = "11"
+            section = "2"
+            name = "Mary Lee"
+            lrn = "109158162812"
+        elif name == "00008":
+            grade = "11"
+            section = "2"
+            name = "David Williams"
+            lrn = "109158382393"
+        elif name == "00009":
+            grade = "11"
+            section = "3"
+            name = "Anthony Moore"
+            lrn = "109158695175"
+        elif name == "00010":
+            grade = "11"
+            section = "3"
+            name = "Shiro Tanaka"
+            lrn = "109158710259"
+
         # Log attendance with name, section, and status
         log_attendance(name, grade, section, lrn, status)
 
