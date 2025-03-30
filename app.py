@@ -782,17 +782,17 @@ def log_attendance_route():
             section = "2"
             name = "Mary Lee"
             lrn = "109158162812"
-        elif name == "00008":
+        elif name == "00009":
             grade = "11"
             section = "2"
             name = "David Williams"
             lrn = "109158382393"
-        elif name == "00009":
+        elif name == "00010":
             grade = "11"
             section = "3"
             name = "Anthony Moore"
             lrn = "109158695175"
-        elif name == "00010":
+        elif name == "00011":
             grade = "11"
             section = "3"
             name = "Shiro Tanaka"
