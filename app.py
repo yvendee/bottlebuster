@@ -806,6 +806,18 @@ def log_attendance_route():
         return jsonify({'error': str(e)}), 500
 
 
+# Global status variables (persistent during server uptime)
+status00001 = "OUT"
+status00002 = "OUT"
+status00003 = "OUT"
+status00004 = "OUT"
+status00005 = "OUT"
+status00006 = "OUT"
+status00007 = "OUT"
+status00008 = "OUT"
+status00009 = "OUT"
+status00010 = "OUT"
+status00011 = "OUT"
 
 def log_karen_attendance(name, grade, section, lrn, status):
     try:
@@ -833,6 +845,9 @@ def log_karen_attendance(name, grade, section, lrn, status):
 
 @app.route('/log_karen_attendance', methods=['POST'])
 def log_karen_attendance_route():
+    global status00001, status00002, status00003, status00004, status00005
+    global status00006, status00007, status00008, status00009, status00010, status00011
+
     try:
         # Retrieve the name, section, and status from the request body
         name = request.json.get('name')
@@ -844,67 +859,135 @@ def log_karen_attendance_route():
 
         if not name or not section or not status:
             return jsonify({'error': 'All fields "name", "section", and "status" are required'}), 400
-
+            
         if name == "00001":
             name = "Precious Angel P. Mendez"
             grade = "12"
             section = "A"
             lrn = "105161120127"
+            if status00001 == "OUT":
+                status = "IN"
+                status00001 = "IN"
+            else:
+                status = "OUT"
+                status00001 = "OUT"
         elif name == "00002":
             name = "Daren E. Fabillar"
             grade = "12"
             section = "A"
             lrn = "105158120169"
+            if status00002 == "OUT":
+                status = "IN"
+                status00002 = "IN"
+            else:
+                status = "OUT"
+                status00002 = "OUT"
         elif name == "00003":
             name = "Maria Gracia S. Lacerna"
             grade = "12"
             section = "B"
             lrn = "105146120038"
+            if status00003 == "OUT":
+                status = "IN"
+                status00003 = "IN"
+            else:
+                status = "OUT"
+                status00003 = "OUT"
         elif name == "00004":
             name = "Anna Rose L. Pardilla"
             grade = "12"
             section = "B"
             lrn = "105144120779"
+            if status00004 == "OUT":
+                status = "IN"
+                status00004 = "IN"
+            else:
+                status = "OUT"
+                status00004 = "OUT"
         elif name == "00005":
             grade = "12"
             section = "C"
             name = "Jonabell DP. Dejumo"
             lrn = "10476310018"
+            if status00005 == "OUT":
+                status = "IN"
+                status00005 = "IN"
+            else:
+                status = "OUT"
+                status00005 = "OUT"
         elif name == "00006":
             grade = "11"
             section = "1"
             name = "Maria Lopez"
             lrn = "109158162812"
+            if status00006 == "OUT":
+                status = "IN"
+                status00006 = "IN"
+            else:
+                status = "OUT"
+                status00006 = "OUT"
         elif name == "00007":
             grade = "11"
             section = "1"
             name = "Mona Wilson"
             lrn = "109158919247"
+            if status00007 == "OUT":
+                status = "IN"
+                status00007 = "IN"
+            else:
+                status = "OUT"
+                status00007 = "OUT"
         elif name == "00008":
             grade = "11"
             section = "2"
             name = "Mary Lee"
             lrn = "109158162812"
+            if status00008 == "OUT":
+                status = "IN"
+                status00008 = "IN"
+            else:
+                status = "OUT"
+                status00008 = "OUT"
         elif name == "00009":
             grade = "11"
             section = "2"
             name = "David Williams"
             lrn = "109158382393"
+            if status00009 == "OUT":
+                status = "IN"
+                status00009 = "IN"
+            else:
+                status = "OUT"
+                status00009 = "OUT"
         elif name == "00010":
             grade = "11"
             section = "3"
             name = "Anthony Moore"
             lrn = "109158695175"
+            if status00010 == "OUT":
+                status = "IN"
+                status00010 = "IN"
+            else:
+                status = "OUT"
+                status00010 = "OUT"
         elif name == "00011":
             grade = "11"
             section = "3"
             name = "Shiro Tanaka"
             lrn = "109158710259"
+            if status00011 == "OUT":
+                status = "IN"
+                status00011 = "IN"
+            else:
+                status = "OUT"
+                status00011 = "OUT"
+        else:
+            return jsonify({'error': 'Student ID not recognized'}), 404
 
         # Log attendance with name, section, and status
         log_karen_attendance(name, grade, section, lrn, status)
 
-        return jsonify({'message': 'Attendance logged successfully'}), 200
+        return jsonify({'message': 'Attendance logged successfully', 'status': status}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
