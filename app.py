@@ -805,6 +805,110 @@ def log_attendance_route():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
+
+def log_karen_attendance(name, grade, section, lrn, status):
+    try:
+        # Get the current date and time in the format "YYYY-MM-DD HH:MM:SS"
+        date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+        # Set up the credentials and client
+        scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+        creds = ServiceAccountCredentials.from_json_keyfile_name('pivotal-being-451013-n8-28821c4ba2f3.json', scope)
+        client = gspread.authorize(creds)
+
+        # Open the spreadsheet by its ID
+        sheet = client.open_by_key("12DyBAszIxA1X1sT3NAlSQVxE09ZOa0XHR9fLqjbGuxo").sheet1
+
+        # Prepare the data to log (using the current date, name, section, and status)
+        data = [date, name, grade, section, status]
+
+        # Append the data to the sheet (this will add the row at the bottom)
+        sheet.append_row(data)
+
+        print("Data logged successfully!")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        raise Exception(f"Failed to log attendance: {str(e)}")
+
+@app.route('/log_karen_attendance', methods=['POST'])
+def log_karen_attendance_route():
+    try:
+        # Retrieve the name, section, and status from the request body
+        name = request.json.get('name')
+        section = request.json.get('section')
+        status = request.json.get('status')
+        grade = ""
+        lrn = ""
+        
+
+        if not name or not section or not status:
+            return jsonify({'error': 'All fields "name", "section", and "status" are required'}), 400
+
+        if name == "00001":
+            name = "Precious Angel P. Mendez"
+            grade = "12"
+            section = "A"
+            lrn = "105161120127"
+        elif name == "00002":
+            name = "Daren E. Fabillar"
+            grade = "12"
+            section = "A"
+            lrn = "105158120169"
+        elif name == "00003":
+            name = "Maria Gracia S. Lacerna"
+            grade = "12"
+            section = "B"
+            lrn = "105146120038"
+        elif name == "00004":
+            name = "Anna Rose L. Pardilla"
+            grade = "12"
+            section = "B"
+            lrn = "105144120779"
+        elif name == "00005":
+            grade = "12"
+            section = "C"
+            name = "Jonabell DP. Dejumo"
+            lrn = "10476310018"
+        elif name == "00006":
+            grade = "11"
+            section = "1"
+            name = "Maria Lopez"
+            lrn = "109158162812"
+        elif name == "00007":
+            grade = "11"
+            section = "1"
+            name = "Mona Wilson"
+            lrn = "109158919247"
+        elif name == "00008":
+            grade = "11"
+            section = "2"
+            name = "Mary Lee"
+            lrn = "109158162812"
+        elif name == "00009":
+            grade = "11"
+            section = "2"
+            name = "David Williams"
+            lrn = "109158382393"
+        elif name == "00010":
+            grade = "11"
+            section = "3"
+            name = "Anthony Moore"
+            lrn = "109158695175"
+        elif name == "00011":
+            grade = "11"
+            section = "3"
+            name = "Shiro Tanaka"
+            lrn = "109158710259"
+
+        # Log attendance with name, section, and status
+        log_karen_attendance(name, grade, section, lrn, status)
+
+        return jsonify({'message': 'Attendance logged successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 @app.route('/backend-test', methods=['GET'])
 def backend_test():
     return jsonify({'message': 'it works', 'status': True})
